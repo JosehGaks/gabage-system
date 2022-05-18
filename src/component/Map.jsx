@@ -1,13 +1,14 @@
-import React, { memo, useCallback } from 'react';
-import { GoogleMap, useJsApiLoader, Marker } from '@react-google-maps/api';
-import { makeStyles, Backdrop, CircularProgress } from '@material-ui/core';
-import PropTypes from 'prop-types';
-import mapStyle from '../mapStyle';
+import React, { memo, useCallback } from "react";
+import { GoogleMap, useJsApiLoader, Marker } from "@react-google-maps/api";
+import { makeStyles, Backdrop, CircularProgress } from "@material-ui/core";
+import PropTypes from "prop-types";
+import mapStyle from "../mapStyle";
+import { GMAPS_API } from "./../constants";
 
 const useStyles = makeStyles(() => ({
   mapContainer: {
     flex: 1,
-    height: '100%',
+    height: "100%",
   },
 }));
 
@@ -16,13 +17,13 @@ function Map({ data, onClick, markerClick, options }) {
   const mapRef = React.useRef(null);
   const [mapOptions, setMapOptions] = React.useState({
     center: {
-      lat: 30.249911727927323,
-      lng: 31.692982161596838,
+      lat: -1.2920659,
+      lng: 36.82194619999996,
     },
     zoom: 12,
   });
   const { isLoaded } = useJsApiLoader({
-    googleMapsApiKey: process.env.REACT_APP_GOOGLE_MAP_API,
+    googleMapsApiKey: GMAPS_API,
   });
 
   const handleLoad = useCallback((map) => {
@@ -49,8 +50,7 @@ function Map({ data, onClick, markerClick, options }) {
           zoom: mapOptions?.zoom,
         }
       }
-      mapContainerClassName={classes.mapContainer}
-    >
+      mapContainerClassName={classes.mapContainer}>
       {data &&
         data.baskets.map(({ id, latitude: lat, longitude: lng }) => (
           <Marker
@@ -83,7 +83,7 @@ Map.propTypes = {
         styles: PropTypes.objectOf(PropTypes.any),
         center: PropTypes.number,
         zoom: PropTypes.number,
-      })
+      }),
     ),
   }),
   options: PropTypes.shape({

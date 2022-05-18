@@ -1,7 +1,7 @@
-import React from 'react';
-import { Route, Redirect } from 'react-router-dom';
-import PropTypes from 'prop-types';
-import { useAuth, hasAccess } from '../contexts/AuthContext';
+import React from "react";
+import { Route, Redirect } from "react-router-dom";
+import PropTypes from "prop-types";
+import { useAuth, hasAccess } from "../contexts/AuthContext";
 
 const AuthRoute = ({ children, path, exact, exclude, appPermissions }) => {
   const { token, permissions } = useAuth();
@@ -10,27 +10,27 @@ const AuthRoute = ({ children, path, exact, exclude, appPermissions }) => {
       return (
         <Redirect
           to={{
-            pathname: '/login',
+            pathname: "/login",
             state: { from: location },
           }}
         />
       );
     }
-    if (!exclude && !token.active) {
-      return (
-        <Redirect
-          to={{
-            pathname: '/confirm',
-            state: { from: location },
-          }}
-        />
-      );
-    }
+    // if (!exclude && !token.active) {
+    //   return (
+    //     <Redirect
+    //       to={{
+    //         pathname: '/confirm',
+    //         state: { from: location },
+    //       }}
+    //     />
+    //   );
+    // }
     if (appPermissions.length && !hasAccess(appPermissions, permissions))
       return (
         <Redirect
           to={{
-            pathname: '/notfound',
+            pathname: "/notfound",
             state: { from: location },
           }}
         />

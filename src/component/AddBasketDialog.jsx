@@ -1,5 +1,5 @@
-import React from 'react';
-import PropTypes from 'prop-types';
+import React from "react";
+import PropTypes from "prop-types";
 import {
   makeStyles,
   Dialog,
@@ -10,41 +10,54 @@ import {
   DialogActions,
   CircularProgress,
   Grid,
-} from '@material-ui/core';
-import { useCreate } from '../api';
-import InputRow from './InputRow';
+} from "@material-ui/core";
+import { useCreate } from "../api";
+import InputRow from "./InputRow";
 
 const useStyles = makeStyles((theme) => ({
   wrapper: {
     margin: theme.spacing(1),
-    position: 'relative',
+    position: "relative",
   },
 
   buttonProgress: {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
+    position: "absolute",
+    top: "50%",
+    left: "50%",
     marginTop: -12,
     marginLeft: -12,
   },
 }));
 
-const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) => {
+const AddBasketDialog = ({
+  setOpenDialog,
+  openDialog,
+  coordinates,
+  onSuccess,
+}) => {
   const classes = useStyles();
   const [inputRows, setInputRows] = React.useState([
-    { id: 1, section: '', section_height: 0, section_length: 0, section_width: 0 },
+    {
+      id: 1,
+      section: "",
+      section_height: 0,
+      section_length: 0,
+      section_width: 0,
+    },
   ]);
-  const { payload: baskets, isPending, create, setPayload } = useCreate(
-    '/baskets',
-    onSuccess
-  );
+  const {
+    payload: baskets,
+    isPending,
+    create,
+    setPayload,
+  } = useCreate("/baskets", onSuccess);
 
   const handleAddInputRow = () => {
     setInputRows((prevInput) => [
       ...prevInput,
       {
         id: prevInput.pop().id + 1,
-        section: '',
+        section: "",
         section_height: 0,
         section_length: 0,
         section_width: 0,
@@ -63,7 +76,7 @@ const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) 
     create({
       longitude: coordinates?.lng,
       latitude: coordinates?.lat,
-      micro_controller: 'nodeMCU',
+      micro_controller: "nodeMCU",
       sections: inputRows,
     });
   };
@@ -75,16 +88,18 @@ const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) 
     }, 100);
   };
 
-  const handleChangeInput = (index) => ({ target }) => {
-    const { name, value, type } = target;
-    const list = [...inputRows];
-    if (type === 'number') {
-      list[index][name] = parseInt(value, 10);
-    } else {
-      list[index][name] = value;
-    }
-    setInputRows(list);
-  };
+  const handleChangeInput =
+    (index) =>
+    ({ target }) => {
+      const { name, value, type } = target;
+      const list = [...inputRows];
+      if (type === "number") {
+        list[index][name] = parseInt(value, 10);
+      } else {
+        list[index][name] = value;
+      }
+      setInputRows(list);
+    };
 
   const renderResult = ({ id }) => {
     return (
@@ -101,9 +116,9 @@ const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) 
         </Grid>
         <Grid item md={6}>
           <img
-            src={`http://localhost:5000/api/quick_response_code/${id}`}
+            src={`https://wastes-management.herokuapp.com/api/quick_response_code/${id}`}
             alt={`basket no. ${id}`}
-            style={{ width: '100%' }}
+            style={{ width: "100%" }}
           />
         </Grid>
       </Grid>
@@ -133,8 +148,7 @@ const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) 
             onClick={closeHandler}
             variant="outlined"
             size="large"
-            color="primary"
-          >
+            color="primary">
             Cancel
           </Button>
           {!baskets ? (
@@ -144,12 +158,14 @@ const AddBasketDialog = ({ setOpenDialog, openDialog, coordinates, onSuccess }) 
                 variant="outlined"
                 size="large"
                 color="primary"
-                disabled={isPending}
-              >
+                disabled={isPending}>
                 Add
               </Button>
               {isPending && (
-                <CircularProgress size={24} className={classes.buttonProgress} />
+                <CircularProgress
+                  size={24}
+                  className={classes.buttonProgress}
+                />
               )}
             </div>
           ) : null}
@@ -167,7 +183,10 @@ AddBasketDialog.propTypes = {
   openDialog: PropTypes.bool.isRequired,
   setOpenDialog: PropTypes.func.isRequired,
   onSuccess: PropTypes.func.isRequired,
-  coordinates: PropTypes.shape({ lat: PropTypes.number, lng: PropTypes.number }),
+  coordinates: PropTypes.shape({
+    lat: PropTypes.number,
+    lng: PropTypes.number,
+  }),
 };
 
 export default AddBasketDialog;

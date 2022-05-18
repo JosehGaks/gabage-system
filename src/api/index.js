@@ -1,29 +1,35 @@
-import axios from 'axios';
-import { useState } from 'react';
+import axios from "axios";
+import { useState } from "react";
+import { API_URL } from "./../constants";
 
 const api = axios.create({
-  baseURL: process.env.REACT_APP_API_URI,
+  baseURL: API_URL,
   headers: {
-    'content-type': 'application/json',
-    'Access-Control-Allow-Origin': '*',
-    Authorization: `Bearer ${localStorage.getItem('access_token')}`,
+    "content-type": "application/json",
+    "Access-Control-Allow-Origin": "*",
+    Authorization: `Bearer ${localStorage.getItem("access_token")}`,
   },
-  responseType: 'json',
+  responseType: "json",
 });
 
 function getNewToken() {
   return new Promise((resolve, reject) => {
     axios
-      .post('http://localhost:5000/api/users/auth/refresh', null, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('refresh_token')}`,
+      .post(
+        "https://wastes-management.herokuapp.com/api/users/auth/refresh",
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("refresh_token")}`,
+          },
         },
-      })
+      )
       .then(({ data }) => {
-        localStorage.setItem('access_token', data.access_token);
+        localStorage.setItem("access_token", data.access_token);
         resolve({ token: data.access_token });
       })
       .catch((error) => {
+        console.error(error);
         reject(error);
       });
   });
@@ -37,12 +43,12 @@ api.interceptors.response.use(
     }
     // Logout user if token refresh didn't work or user is disabled
     if (
-      error.config.url === '/api/users/refresh' ||
-      error.response.message === 'Account is disabled.' ||
-      error.response.data.message === 'username or password not valid'
+      error.config.url === "/api/users/refresh" ||
+      error.response.message === "Account is disabled." ||
+      error.response.data.message === "username or password not valid"
     ) {
-      localStorage.removeItem('access_token');
-      localStorage.removeItem('refresh_token');
+      localStorage.removeItem("access_token");
+      localStorage.removeItem("refresh_token");
       return new Promise((resolve, reject) => reject(error));
     }
     const responseData = getNewToken()
@@ -50,7 +56,7 @@ api.interceptors.response.use(
         // New request with new token
         const { config } = error;
         config.headers.Authorization = `Bearer ${token}`;
-        localStorage.setItem('access_token', token);
+        localStorage.setItem("access_token", token);
 
         return new Promise((resolve, reject) => {
           api
@@ -67,7 +73,7 @@ api.interceptors.response.use(
         Promise.reject(tokenError);
       });
     return responseData;
-  }
+  },
 );
 
 export const useGet = (resources) => {
@@ -183,7 +189,7 @@ export const useSend = (resources) => {
       .post(resources, formData, {
         onUploadProgress,
         headers: {
-          'Content-Type': 'multipart/form-data',
+          "Content-Type": "multipart/form-data",
         },
       })
       .then(({ data }) => setPayload(data))
@@ -201,7 +207,7 @@ export const usePublish = (topic) => {
     api
       .post(topic, {
         msg: message,
-        baseURL: 'waste-management-red-node.herokuapp.com',
+        baseURL: "waste-management-red-node.herokuapp.com",
       })
       .then(({ data }) => {
         setPayload(data);
